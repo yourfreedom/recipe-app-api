@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, \
                                         PermissionsMixin
+from django.utils.translation import gettext as _
+from django.utils import timezone
 
 
 class UserManager(BaseUserManager):
@@ -8,9 +10,8 @@ class UserManager(BaseUserManager):
         """
         Creates and saves a User with the given email and password.
         """
-        if not email:
+        if not email or email.split('@')[0] == '':
             raise ValueError('Users must have an email address')
-
         user = self.model(email=self.normalize_email(email), **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
@@ -40,9 +41,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         max_length=255,
         unique=True,
     )
-    name = models.CharField(max_length=255, blank=True, null=True)
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
+    name = models.CharField(_('Имя'), max_length=255, blank=True, null=True)
+    is_active = models.BooleanField(_('Активный'), default=True)
+    is_staff = models.BooleanField(_('Персонал'), default=False)
+    date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
 
     objects = UserManager()
 
@@ -50,3 +52,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+    class Meta:
+        verbose_name = _("Пользователь")
+        verbose_name_plural = _("Пользователи")
