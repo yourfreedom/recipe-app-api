@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, \
                                         PermissionsMixin
+from django.conf import settings
+
 from django.utils.translation import gettext as _
 from django.utils import timezone
 
@@ -56,3 +58,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = _("Пользователь")
         verbose_name_plural = _("Пользователи")
+
+
+class Tag(models.Model):
+    """Tag to be used for recipe"""
+    name = models.CharField(max_length=255)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+
+    def __str__(self):
+        return self.name
