@@ -50,7 +50,7 @@ class PrivateTagsApiTests(TestCase):
         self.assertEqual(res.data, serializer.data)
 
     def test_tags_limited_for_user(self):
-        """Test that only authenticated users can create a tag"""
+        """Test that tags for the authenticated user are returned"""
         user2 = get_user_model().objects.create_user(
             email='7@7.com',
             password='dj54321'
